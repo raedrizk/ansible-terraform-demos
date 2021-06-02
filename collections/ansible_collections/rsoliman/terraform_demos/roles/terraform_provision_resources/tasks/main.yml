@@ -1,0 +1,52 @@
+---
+# tasks file for terraform_provision_aws_resources
+- name: Make sure working directory exists
+  file:
+    path: /var/terraform/plans/{{ working_dir_name }}
+    state: directory
+    mode: '0755'
+
+- name: Copy the TF Plan
+  copy:
+    src: "{{ tf_plan_file_name }}"
+    dest: /var/terraform/plans/{{ working_dir_name }}/{{ tf_plan_file_name }}
+
+- name: Copy the TF Vars Template
+  template:
+    src: "{{ tf_vars_file_name }}.j2"
+    dest: /var/terraform/plans/{{ working_dir_name }}/{{ tf_vars_file_name }}
+
+- name: Copy the userdata template
+  template:
+    src: "{{ init_script_name }}.j2"
+    dest: /var/terraform/plans/{{ working_dir_name }}/{{ init_script_name }}
+
+- name: execute terraform plan
+  terraform:
+    force_init: true
+    project_path: /var/terraform/plans/{{ working_dir_name }}
+    variables_file: /var/terraform/plans/{{ working_dir_name }}/{{ tf_vars_file_name }}
+    state: present
+  register: tf_output
+
+- name: cleanup userdata file 
+  file:
+    path: /var/terraform/plans/{{ working_dir_name }}/{{ init_script_name }}
+    state: absent
+
+- name: replcae userdata file with empty one for destroy actions
+  file:
+    path: /var/terraform/plans/{{ working_dir_name }}/{{ init_script_name }}
+    state: touch
+
+- debug:
+    var: tf_output
+
+- name: Read the contents of the state file
+  slurp:
+    src: /var/terraform/plans/{{ working_dir_name }}/terraform.tfstate
+  register: tfstate
+
+- name: Print content of state file for Demo Purposes
+  debug:
+    msg: "{{ tfstate['content'] | b64decode }}"

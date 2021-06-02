@@ -1,0 +1,11 @@
+location_name = "{{ azure_location }}"
+name_tag = "{{ azure_name_tag }}"
+instance_type = "{{ azure_instance_type }}"
+private_ip_address = "{{ azure_instance_private_ip_address }}"
+
+image_publisher = "{{ azure_vm_image[azure_vm_os].image_publisher }}"
+image_offer = "{{ azure_vm_image[azure_vm_os].image_offer }}"
+image_sku = "{{ azure_vm_image[azure_vm_os].image_sku }}"
+image_version = "{{ azure_vm_image[azure_vm_os].image_version }}"
+admin_username = "ansibleadmin"
+admin_password = "{{ ansible_password }}"

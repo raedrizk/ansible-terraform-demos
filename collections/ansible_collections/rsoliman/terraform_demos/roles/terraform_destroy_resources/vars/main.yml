@@ -1,0 +1,5 @@
+---
+# vars file for terraform_destroy_aws_resources
+working_dir_name: "{{ working_dir_name_choice | default('provision_aws_resources') }}"
+tf_plan_file_name: "{{ tf_plan_file_name_choice | default('provision_aws_resources.tf') }}"
+tf_vars_file_name: "{{ tf_vars_file_name_choice | default('provision_aws_resources.tfvars') }}"

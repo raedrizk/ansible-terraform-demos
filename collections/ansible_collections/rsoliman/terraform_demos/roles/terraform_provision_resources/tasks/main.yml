@@ -1,28 +1,28 @@
 ---
 # tasks file for terraform_provision_aws_resources
 - name: Make sure working directory exists
-  file:
+  ansible.builtin.file:
     path: /var/terraform/plans/{{ working_dir_name }}
     state: directory
     mode: '0755'
 
 - name: Copy the TF Plan
-  copy:
+  ansible.builtin.copy:
     src: "{{ tf_plan_file_name }}"
     dest: /var/terraform/plans/{{ working_dir_name }}/{{ tf_plan_file_name }}
 
 - name: Copy the TF Vars Template
-  template:
+  ansible.builtin.template:
     src: "{{ tf_vars_file_name }}.j2"
     dest: /var/terraform/plans/{{ working_dir_name }}/{{ tf_vars_file_name }}
 
 - name: Copy the userdata template
-  template:
+  ansible.builtin.template:
     src: "{{ init_script_name }}.j2"
     dest: /var/terraform/plans/{{ working_dir_name }}/{{ init_script_name }}
 
 - name: execute terraform plan
-  terraform:
+  community.general.terraform:
     force_init: true
     project_path: /var/terraform/plans/{{ working_dir_name }}
     variables_file: /var/terraform/plans/{{ working_dir_name }}/{{ tf_vars_file_name }}
@@ -30,23 +30,23 @@
   register: tf_output
 
 - name: cleanup userdata file 
-  file:
+  ansible.builtin.file:
     path: /var/terraform/plans/{{ working_dir_name }}/{{ init_script_name }}
     state: absent
 
 - name: replcae userdata file with empty one for destroy actions
-  file:
+  ansible.builtin.file:
     path: /var/terraform/plans/{{ working_dir_name }}/{{ init_script_name }}
     state: touch
 
-- debug:
+- ansible.builtin.debug:
     var: tf_output
 
 - name: Read the contents of the state file
-  slurp:
+  ansible.builtin.slurp:
     src: /var/terraform/plans/{{ working_dir_name }}/terraform.tfstate
   register: tfstate
 
 - name: Print content of state file for Demo Purposes
-  debug:
+  ansible.builtin.debug:
     msg: "{{ tfstate['content'] | b64decode }}"

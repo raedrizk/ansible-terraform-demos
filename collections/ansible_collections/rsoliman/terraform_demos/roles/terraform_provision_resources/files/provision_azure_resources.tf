@@ -58,9 +58,11 @@ variable "private_ip_address" {
 }
 
 provider "azurerm" {
-    version = "~>2.0"
+    version = "~>2.46.0"
     features {}
 }
+
+
 
 resource "azurerm_resource_group" "TFDemoRG" {
     name     = "${var.name_tag}-RG"

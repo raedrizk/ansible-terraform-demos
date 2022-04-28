@@ -1,0 +1,10 @@
+---
+- name: Destroy GCP resources using a Terraform Plan
+  hosts: all
+  gather_facts: false
+  vars:
+    working_dir_name_choice: 'provision_gcp_resources'
+    tf_plan_file_name_choice: 'provision_gcp_resources.tf'
+    tf_vars_file_name_choice: 'provision_gcp_resources.tfvars'
+  roles:
+  - rsoliman.terraform_demos.terraform_destroy_resources

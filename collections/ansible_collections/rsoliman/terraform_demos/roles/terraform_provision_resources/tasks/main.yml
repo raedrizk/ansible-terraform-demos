@@ -21,7 +21,7 @@
     src: "{{ init_script_name }}.j2"
     dest: /var/terraform/plans/{{ working_dir_name }}/{{ init_script_name }}
 
-- name: execute terraform plan
+- name: Apply terraform plan
   community.general.terraform:
     force_init: true
     project_path: /var/terraform/plans/{{ working_dir_name }}

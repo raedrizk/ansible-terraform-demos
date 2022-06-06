@@ -28,6 +28,10 @@ variable "type" {
   description = "The machine type for the new vm."
 }
 
+variable "disksize" {
+  type        = string
+  description = "The disk size for the new vm."
+}
 
 
 terraform {
@@ -72,6 +76,7 @@ resource "google_compute_instance" "vm_instance" {
   boot_disk {
     initialize_params {
       image = var.image
+      size = var.disksize
     }
   }
   metadata_startup_script = file("userdata_Linux.sh")

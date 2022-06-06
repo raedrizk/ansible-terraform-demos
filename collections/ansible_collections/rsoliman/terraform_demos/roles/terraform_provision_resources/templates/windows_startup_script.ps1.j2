@@ -1,0 +1,8 @@
+<powershell>
+
+net user ansibleadmin {{ ansible_password }} /add /fullname:"Ansible Administrator Account" /passwordchg:no /Y
+NET LOCALGROUP "Administrators" "ansibleadmin" /add
+[Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
+Invoke-Expression ((New-Object System.Net.Webclient).DownloadString('https://raw.githubusercontent.com/ansible/ansible/devel/examples/scripts/ConfigureRemotingForAnsible.ps1'))
+
+</powershell>

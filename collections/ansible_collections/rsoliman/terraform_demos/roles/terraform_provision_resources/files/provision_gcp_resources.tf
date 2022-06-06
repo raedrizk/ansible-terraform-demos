@@ -33,6 +33,10 @@ variable "disksize" {
   description = "The disk size for the new vm."
 }
 
+variable "startupscript" {
+  type        = string
+  description = "Name of the startup script."
+}
 
 terraform {
   required_providers {
@@ -79,7 +83,8 @@ resource "google_compute_instance" "vm_instance" {
       size = var.disksize
     }
   }
-  metadata_startup_script = file("userdata_Linux.sh")
+#  metadata_startup_script = file("userdata_Linux.sh")
+  metadata_startup_script = file(var.startupscript)
   network_interface {
     network = google_compute_network.vpc_network.name
     access_config {

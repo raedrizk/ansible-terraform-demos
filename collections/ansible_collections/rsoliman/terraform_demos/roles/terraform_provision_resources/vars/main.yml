@@ -3,7 +3,7 @@
 working_dir_name: "{{ working_dir_name_choice | default('provision_aws_resources') }}"
 tf_plan_file_name: "{{ tf_plan_file_name_choice | default('provision_aws_resources.tf') }}"
 tf_vars_file_name: "{{ tf_vars_file_name_choice | default('provision_aws_resources.tfvars') }}"
-init_script_name: "{{ 'windows_startup_script.ps1' if (virtualmachine_ostype_choice is defined and and virtualmachine_ostype_choice == 'Windows') else 'userdata_Linux.sh'  | default('userdata_Linux.sh') }}"
+init_script_name: "{{ 'windows_startup_script.ps1' if virtualmachine_ostype_choice is defined and virtualmachine_ostype_choice == 'Windows' else 'userdata_Linux.sh' | default('userdata_Linux.sh') }}"
 
 
 

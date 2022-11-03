@@ -4,6 +4,11 @@ variable "location_name" {
   default     = "eastus"
 }
 
+variable "resource_group_name" {
+  type        = string
+  description = "The Azure Resource Group Name to provision resources into."
+}
+
 variable "name_tag" {
   type        = string
   description = "The Name that will be used to tag Azure resources created by the TF plan."
@@ -64,20 +69,20 @@ provider "azurerm" {
 
 
 
-resource "azurerm_resource_group" "TFDemoRG" {
-    name     = "${var.name_tag}-RG"
-    location = var.location_name
-
-    tags = {
-        environment = "${var.name_tag}"
-    }
-}
+# resource "azurerm_resource_group" "TFDemoRG" {
+#    name     = "${var.name_tag}-RG"
+#    location = var.location_name
+#
+#    tags = {
+#        environment = "${var.name_tag}"
+#    }
+# }
 
 resource "azurerm_virtual_network" "TFDemoNetwork" {
     name                = "${var.name_tag}-VNet"
     address_space       = ["10.0.0.0/16"]
     location            = "eastus"
-    resource_group_name = azurerm_resource_group.TFDemoRG.name
+    resource_group_name = "${var.resource_group_name}"
 
     tags = {
         environment = "Terraform Demo"
@@ -86,7 +91,7 @@ resource "azurerm_virtual_network" "TFDemoNetwork" {
 
 resource "azurerm_subnet" "TFDemoSubnet" {
     name                 = "${var.name_tag}-Subnet"
-    resource_group_name  = azurerm_resource_group.TFDemoRG.name
+    resource_group_name  = "${var.resource_group_name}"
     virtual_network_name = azurerm_virtual_network.TFDemoNetwork.name
     address_prefixes       = ["10.0.1.0/24"]
 }
@@ -94,7 +99,7 @@ resource "azurerm_subnet" "TFDemoSubnet" {
 resource "azurerm_public_ip" "TFDemoPublicIP" {
     name                         = "${var.name_tag}-PublicIP"
     location                     = var.location_name
-    resource_group_name          = azurerm_resource_group.TFDemoRG.name
+    resource_group_name          = "${var.resource_group_name}"
     allocation_method            = "Dynamic"
 
     tags = {
@@ -106,7 +111,7 @@ resource "azurerm_public_ip" "TFDemoPublicIP" {
 resource "azurerm_network_security_group" "TFDemoSG" {
     name                = "${var.name_tag}-SG"
     location            = var.location_name
-    resource_group_name = azurerm_resource_group.TFDemoRG.name
+    resource_group_name = "${var.resource_group_name}"
 
     security_rule {
         name                       = "SSH"
@@ -129,7 +134,7 @@ resource "azurerm_network_security_group" "TFDemoSG" {
 resource "azurerm_network_interface" "TFDemoNIC" {
     name                      = "${var.name_tag}-NIC"
     location                  = var.location_name
-    resource_group_name       = azurerm_resource_group.TFDemoRG.name
+    resource_group_name       = "${var.resource_group_name}"
 
     ip_configuration {
         name                          = "TFDemoNicConfiguration"
@@ -154,7 +159,7 @@ resource "azurerm_network_interface_security_group_association" "TFDemo_Associat
 resource "azurerm_linux_virtual_machine" "TFDemoVM" {
     name                  = "${var.name_tag}-VM"
     location              = var.location_name
-    resource_group_name   = azurerm_resource_group.TFDemoRG.name
+    resource_group_name   = "${var.resource_group_name}"
     network_interface_ids = [azurerm_network_interface.TFDemoNIC.id]
     size                  = var.instance_type
 

@@ -1,5 +1,5 @@
 #!/bin/bash
-useradd -m -p $(echo '{{ ans/home/ansibleadmin/ansiblecallback\.shible_password }}" | openssl passwd -1 -stdin) ansibleadmin
+useradd -m -p $(echo "{{ ansible_password }}" | openssl passwd -1 -stdin) ansibleadmin
 usermod -a -G sudo ansibleadmin
 usermod -a -G wheel ansibleadmin
 sed -i 's/PasswordAuthentication.*/PasswordAuthentication yes/' /etc/ssh/sshd_config
@@ -107,3 +107,4 @@ done
 endmsg
 
 # sh /home/ansibleadmin/callback_aap.sh -s {{ ansible_controller_url }} -k -c {{ ansible_controller_host_key }} -t {{ ansible_controller_template_id }}
+

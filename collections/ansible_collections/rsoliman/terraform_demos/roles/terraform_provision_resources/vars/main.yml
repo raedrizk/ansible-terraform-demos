@@ -6,6 +6,9 @@ tf_vars_file_name: "{{ tf_vars_file_name_choice | default('provision_aws_resourc
 #init_script_name: "{{ 'windows_startup_script.ps1' if virtualmachine_ostype_choice is defined and virtualmachine_ostype_choice == 'Windows' else 'userdata_Linux.sh' | default('userdata_Linux.sh') }}"
 init_script_name: "{{ 'userdata_Linux.sh' | default('userdata_Linux.sh') }}"
 
+ansible_controller_url: controller.demo.com
+ansible_controller_host_key: 123
+ansible_controller_template_id: 1
 
 
 azure_vm_os: "{{ azure_vm_os_choice | default('CentOS7.5') }}"

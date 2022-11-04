@@ -5,3 +5,102 @@ usermod -a -G wheel ansibleadmin
 sed -i 's/PasswordAuthentication.*/PasswordAuthentication yes/' /etc/ssh/sshd_config
 service ssh restart
 service sshd restart
+
+echo "#!/bin/bash" >> /tmp/ansiblecallback.sh
+
+echo "fatal() {" >> /tmp/ansiblecallback.sh
+echo "if [ -n "${2}" ]; then" >> /tmp/ansiblecallback.sh
+echo "    echo -e "Error: ${2}"" >> /tmp/ansiblecallback.sh
+echo "fi" >> /tmp/ansiblecallback.sh
+echo "exit ${1}" >> /tmp/ansiblecallback.sh
+echo "}" >> /tmp/ansiblecallback.sh
+
+echo "usage() {" >> /tmp/ansiblecallback.sh
+echo "cat << EOF" >> /tmp/ansiblecallback.sh
+echo "Usage: $0 <options>" >> /tmp/ansiblecallback.sh
+
+echo "Request server configuration from Ansible Tower." >> /tmp/ansiblecallback.sh
+
+echo "OPTIONS:" >> /tmp/ansiblecallback.sh
+echo "-h      Show this message" >> /tmp/ansiblecallback.sh
+echo "-s      Tower server (e.g. https://tower.example.com) (required)" >> /tmp/ansiblecallback.sh
+echo "-k      Allow insecure SSL connections and transfers" >> /tmp/ansiblecallback.sh
+echo "-c      Host config key (required)" >> /tmp/ansiblecallback.sh
+echo "-t      Job template ID (required)" >> /tmp/ansiblecallback.sh
+echo "-e      Extra variables" >> /tmp/ansiblecallback.sh
+echo "EOF" >> /tmp/ansiblecallback.sh
+echo "}" >> /tmp/ansiblecallback.sh
+
+echo "# Initialize variables" >> /tmp/ansiblecallback.sh
+echo "INSECURE=""" >> /tmp/ansiblecallback.sh
+
+echo "# Parse arguments" >> /tmp/ansiblecallback.sh
+echo "while getopts “hks:c:t:s:e:” OPTION" >> /tmp/ansiblecallback.sh
+echo "do" >> /tmp/ansiblecallback.sh
+echo "case ${OPTION} in" >> /tmp/ansiblecallback.sh
+echo "    h)" >> /tmp/ansiblecallback.sh
+echo "    usage" >> /tmp/ansiblecallback.sh
+echo "    exit 1" >> /tmp/ansiblecallback.sh
+echo "    ;;" >> /tmp/ansiblecallback.sh
+echo "    s)" >> /tmp/ansiblecallback.sh
+echo "    TOWER_SERVER=${OPTARG}" >> /tmp/ansiblecallback.sh
+echo "    ;;" >> /tmp/ansiblecallback.sh
+echo "    k)" >> /tmp/ansiblecallback.sh
+echo "    INSECURE="-k"" >> /tmp/ansiblecallback.sh
+echo "    ;;" >> /tmp/ansiblecallback.sh
+echo "    c)" >> /tmp/ansiblecallback.sh
+echo "    HOST_CFG_KEY=${OPTARG}" >> /tmp/ansiblecallback.sh
+echo "    ;;" >> /tmp/ansiblecallback.sh
+echo "    t)" >> /tmp/ansiblecallback.sh
+echo "    TEMPLATE_ID=${OPTARG}" >> /tmp/ansiblecallback.sh
+echo "    ;;" >> /tmp/ansiblecallback.sh
+echo "    e)" >> /tmp/ansiblecallback.sh
+echo "    EXTRA_VARS=${OPTARG}" >> /tmp/ansiblecallback.sh
+echo "    ;;" >> /tmp/ansiblecallback.sh
+echo "    ?)" >> /tmp/ansiblecallback.sh
+echo "    usage" >> /tmp/ansiblecallback.sh
+echo "    exit" >> /tmp/ansiblecallback.sh
+echo "    ;;" >> /tmp/ansiblecallback.sh
+echo "esac" >> /tmp/ansiblecallback.sh
+echo "done" >> /tmp/ansiblecallback.sh
+
+echo "# Validate required arguments" >> /tmp/ansiblecallback.sh
+echo "test -z ${TOWER_SERVER} && fatal 1 "Missing required -s argument"" >> /tmp/ansiblecallback.sh
+echo "# Make sure TOWER_SERVER starts with http:// or https://" >> /tmp/ansiblecallback.sh
+echo "[[ "${TOWER_SERVER}" =~ ^https?:// ]] || fatal 1 "Tower server must begin with http:// or https://"" >> /tmp/ansiblecallback.sh
+echo "test -z ${HOST_CFG_KEY} && fatal 1 "Missing required -c argument"" >> /tmp/ansiblecallback.sh
+echo "test -z ${TEMPLATE_ID} && fatal 1 "Missing required -t argument"" >> /tmp/ansiblecallback.sh
+
+echo "# Generate curl --data parameter" >> /tmp/ansiblecallback.sh
+echo "if [ -n "${EXTRA_VARS}" ]; then" >> /tmp/ansiblecallback.sh
+echo "CURL_DATA="{\"host_config_key\": \"${HOST_CFG_KEY}\", \"extra_vars\": \"${EXTRA_VARS}\"}"" >> /tmp/ansiblecallback.sh
+echo "else" >> /tmp/ansiblecallback.sh
+echo "CURL_DATA="{\"host_config_key\": \"${HOST_CFG_KEY}\"}"" >> /tmp/ansiblecallback.sh
+echo "fi" >> /tmp/ansiblecallback.sh
+
+echo "# Success on any 2xx status received, failure on only 404 status received, retry any other status every min for up to 10 min" >> /tmp/ansiblecallback.sh
+echo "RETRY_ATTEMPTS=10" >> /tmp/ansiblecallback.sh
+echo "ATTEMPT=0" >> /tmp/ansiblecallback.sh
+echo "while [[ $ATTEMPT -lt $RETRY_ATTEMPTS ]]" >> /tmp/ansiblecallback.sh
+echo "do" >> /tmp/ansiblecallback.sh
+echo "set -o pipefail" >> /tmp/ansiblecallback.sh
+echo "HTTP_STATUS=$(curl ${INSECURE} -s -i -X POST -H 'Content-Type:application/json' --data "$CURL_DATA" ${TOWER_SERVER}/api/v2/job_templates/${TEMPLATE_ID}/callback/ 2>&1 | head -n1 | awk '{print $2}')" >> /tmp/ansiblecallback.sh
+echo "CURL_RC=$?" >> /tmp/ansiblecallback.sh
+echo "if [ ${CURL_RC} -ne 0 ]; then" >> /tmp/ansiblecallback.sh
+echo "    fatal ${CURL_RC} "curl exited with ${CURL_RC}, halting."" >> /tmp/ansiblecallback.sh
+echo "fi" >> /tmp/ansiblecallback.sh
+
+echo "# Extract http status code" >> /tmp/ansiblecallback.sh
+echo "if [[ ${HTTP_STATUS} =~ ^2[0-9]+$ ]]; then" >> /tmp/ansiblecallback.sh
+echo "    echo "Success: ${HTTP_STATUS} received."" >> /tmp/ansiblecallback.sh
+echo "    break" >> /tmp/ansiblecallback.sh
+echo "elif [[ ${HTTP_STATUS} =~ ^404$ ]]; then" >> /tmp/ansiblecallback.sh
+echo "    fatal 1 "Failed: ${HTTP_STATUS} received, encountered problem, halting."" >> /tmp/ansiblecallback.sh
+echo "else" >> /tmp/ansiblecallback.sh
+echo "    ATTEMPT=$((ATTEMPT + 1))" >> /tmp/ansiblecallback.sh
+echo "    echo "Failed: ${HTTP_STATUS} received, executing retry #${ATTEMPT} in 1 minute."" >> /tmp/ansiblecallback.sh
+echo "    sleep 60" >> /tmp/ansiblecallback.sh
+echo "fi" >> /tmp/ansiblecallback.sh
+echo "done" >> /tmp/ansiblecallback.sh
+
+# sh /tmp/callback_ansible_tower.sh -s {{ ansible_controller_url }} -k -c {{ ansible_controller_host_key }} -t {{ ansible_controller_template_id }}

@@ -1,0 +1,11 @@
+---
+- name: Prepare the provision and callback demo on {{ terraform_demo_cloud_choice }}
+  hosts: all
+  gather_facts: false
+  vars:
+    working_dir_name_choice: "provision_{{ terraform_demo_cloud_choice }}_resources"
+    tf_plan_file_name_choice: "provision_{{ terraform_demo_cloud_choice }}_resources.tf"
+    tf_vars_file_name_choice: "provision_{{ terraform_demo_cloud_choice }}_resources.tfvars"
+    prepare_callback_demo: true
+  roles:
+  - rsoliman.terraform_demos.terraform_provision_resources

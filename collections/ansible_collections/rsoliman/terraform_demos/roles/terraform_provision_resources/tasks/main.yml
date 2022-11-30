@@ -29,6 +29,9 @@
       project_path: /var/terraform/plans/{{ working_dir_name }}
       variables_file: /var/terraform/plans/{{ working_dir_name }}/{{ tf_vars_file_name }}
       state: present
+    environment:
+      AWS_STS_REGIONAL_ENDPOINTS: regional
+      AWS_DEFAULT_REGION: us-east-2
 
 
   # - name: cleanup userdata file 

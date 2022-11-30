@@ -25,7 +25,6 @@ variable "instance_count" {
 }
 
 provider "aws" {
-  profile = "default"
   region  = var.region_name
 }
 

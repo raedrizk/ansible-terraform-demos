@@ -23,33 +23,52 @@
 
 - block:
   - name: Apply terraform plan
-    community.general.terraform:
+    cloud.terraform.terraform:
       force_init: true
+      lock: true
       project_path: /var/terraform/plans/{{ working_dir_name }}
       variables_file: /var/terraform/plans/{{ working_dir_name }}/{{ tf_vars_file_name }}
       state: present
-    register: tf_output
 
-  - name: cleanup userdata file 
-    ansible.builtin.file:
-      path: /var/terraform/plans/{{ working_dir_name }}/{{ init_script_name }}
-      state: absent
 
-  - name: replcae userdata file with empty one for destroy actions
-    ansible.builtin.file:
-      path: /var/terraform/plans/{{ working_dir_name }}/{{ init_script_name }}
-      state: touch
+  # - name: cleanup userdata file 
+  #   ansible.builtin.file:
+  #     path: /var/terraform/plans/{{ working_dir_name }}/{{ init_script_name }}
+  #     state: absent
 
-  - ansible.builtin.debug:
-      var: tf_output
+  # - name: replcae userdata file with empty one for destroy actions
+  #   ansible.builtin.file:
+  #     path: /var/terraform/plans/{{ working_dir_name }}/{{ init_script_name }}
+  #     state: touch
 
-  - name: Read the contents of the state file
-    ansible.builtin.slurp:
-      src: /var/terraform/plans/{{ working_dir_name }}/terraform.tfstate
-    register: tfstate
+  # - ansible.builtin.debug:
+  #     var: tf_output
 
-  - name: Print content of state file for Demo Purposes
-    ansible.builtin.debug:
-      msg: "{{ tfstate['content'] | b64decode }}"
-      
+  # - name: Read the contents of the state file
+  #   ansible.builtin.slurp:
+  #     src: /var/terraform/plans/{{ working_dir_name }}/terraform.tfstate
+  #   register: tfstate
+
+  # - name: Print content of state file for Demo Purposes
+  #   ansible.builtin.debug:
+  #     msg: "{{ tfstate['content'] | b64decode }}"
+
+  - name: Read outputs from state file
+    cloud.terraform.terraform_output:
+      project_path: /var/terraform/plans/{{ working_dir_name }}
+    register: terraform_state_file
+
+  - name: Print state file for DEMO perposes
+    debug:
+      var: terraform_state_file
+
+  - name: Add hosts from terraform_output            
+    ansible.builtin.add_host:
+    name: "{{ item[mapping_variables.name] }}"
+      groups: "{{ item[mapping_variables.group] }}"
+      ansible_host: "{{ item[mapping_variables.ip] }}"
+      ansible_user: "{{ item[mapping_variables.user] }}"
+    loop: "{{ terraform_state_file.outputs[mapping_variables.host_list].value }}"
+
+
   when: prepare_callback_demo is not defined or not prepare_callback_demo

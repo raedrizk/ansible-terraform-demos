@@ -62,13 +62,13 @@
     debug:
       var: terraform_state_file
 
-  - name: Add hosts from terraform_output            
-    ansible.builtin.add_host:
-    name: "{{ item[mapping_variables.name] }}"
-      groups: "{{ item[mapping_variables.group] }}"
-      ansible_host: "{{ item[mapping_variables.ip] }}"
-      ansible_user: "{{ item[mapping_variables.user] }}"
-    loop: "{{ terraform_state_file.outputs[mapping_variables.host_list].value }}"
+  # - name: Add hosts from terraform_output            
+  #   ansible.builtin.add_host:
+  #   name: "{{ item[mapping_variables.name] }}"
+  #     groups: "{{ item[mapping_variables.group] }}"
+  #     ansible_host: "{{ item[mapping_variables.ip] }}"
+  #     ansible_user: "{{ item[mapping_variables.user] }}"
+  #   loop: "{{ terraform_state_file.outputs[mapping_variables.host_list].value }}"
 
 
   when: prepare_callback_demo is not defined or not prepare_callback_demo

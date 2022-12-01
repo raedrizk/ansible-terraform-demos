@@ -24,6 +24,11 @@ variable "instance_count" {
   default     = 2
 }
 
+variable "public_key" {
+  type        = string
+  description = "The public key to deploy for the new instance(s)."
+}
+
 provider "aws" {
   region  = var.region_name
 }
@@ -60,12 +65,18 @@ resource "aws_security_group" "Terraform_Demo_SG" {
   }
 }
 
+resource "aws_key_pair" "Terraform_Demo_Key" {
+  key_name   = var.name_tag
+  public_key = var.public_key
+}
+
 resource "aws_instance" "Terraform_Demo_EC2" {
   count         = var.instance_count
   ami           = var.ami_id
   instance_type = var.instance_type
   security_groups = [aws_security_group.Terraform_Demo_SG.name]
   user_data = file("userdata_Linux.sh")
+  key_name = var.name_tag
   tags = {
                 Name = "${var.name_tag}-${count.index + 1}"
                 Provisioner = "Terraform"

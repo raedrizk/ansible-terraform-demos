@@ -1,5 +1,5 @@
 ---
-# tasks file for terraform_provision_aws_resources
+# tasks file for terraform_provision_resources
 - name: Make sure working directory exists
   ansible.builtin.file:
     path: /var/terraform/plans/{{ working_dir_name }}

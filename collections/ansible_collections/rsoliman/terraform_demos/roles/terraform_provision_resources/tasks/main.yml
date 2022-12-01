@@ -21,13 +21,13 @@
     src: "{{ init_script_name }}.j2"
     dest: /var/terraform/plans/{{ working_dir_name }}/{{ init_script_name }}
 
-- name: Apply terraform plan
+- name: manage terraform plan
   cloud.terraform.terraform:
     force_init: true
     lock: true
     project_path: /var/terraform/plans/{{ working_dir_name }}
     variables_file: /var/terraform/plans/{{ working_dir_name }}/{{ tf_vars_file_name }}
-    state: present
+    state: "{{ state }}"
     backend_config:
       region: "us-east-1"
       bucket: "tfdemo-backend-bucket"

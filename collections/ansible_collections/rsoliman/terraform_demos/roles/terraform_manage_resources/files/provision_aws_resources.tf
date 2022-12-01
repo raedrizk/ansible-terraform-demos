@@ -90,17 +90,17 @@ resource "aws_instance" "Terraform_Demo_EC2" {
   }
 
 output "instance_ip_addr" {
-  value       = aws_instance.Terraform_Demo_EC2[count.index].public_ip
+  value       = "${formatlist("%v", Terraform_Demo_EC2.coreos.*.public_ip)}"
   description = "The Public IP address of the instance."
 }
 
 output "instance_public_dns" {
-  value       = aws_instance.Terraform_Demo_EC2[count.index].public_dns
+  value       = "${formatlist("%v", Terraform_Demo_EC2.coreos.*.public_dns)}"
   description = "The Public DNS of the instance."
 }
 
 output "instance_tags" {
-  value = aws_instance.Terraform_Demo_EC2[count.index].tags_all
+  value = "${formatlist("%v", Terraform_Demo_EC2.coreos.*.tags_all)}"
   description = "The tags of the instance."
 }
 

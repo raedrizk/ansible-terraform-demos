@@ -37,8 +37,9 @@
   - block:
     - name: Get state file 
       amazon.aws.s3_object:
-        bucket: mybucket
-        object: aws/terraform.tfstate
+        region: "us-east-1"
+        bucket: "tfdemo-backend-bucket"
+        object: "aws/terraform.tfstate"
         dest: /var/terraform/plans/{{ working_dir_name }}/terraform.tfstate
         mode: get
       when: resources_state == "present"

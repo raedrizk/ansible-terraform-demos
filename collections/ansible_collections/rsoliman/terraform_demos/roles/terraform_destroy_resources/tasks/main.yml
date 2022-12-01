@@ -15,8 +15,8 @@
       state_file: /var/terraform/plans/{{ working_dir_name }}/terraform.tfstate
       variables_file: /var/terraform/plans/{{ working_dir_name }}/{{ tf_vars_file_name }}
 
-  - name: Remove the /var/terraform/plans/{{ working_dir_name }} directory
-    ansible.builtin.file:
-      path: /var/terraform/plans/{{ working_dir_name }}
-      state: absent
+  # - name: Remove the /var/terraform/plans/{{ working_dir_name }} directory
+  #   ansible.builtin.file:
+  #     path: /var/terraform/plans/{{ working_dir_name }}
+  #     state: absent
   when: statefile_check.stat.exists

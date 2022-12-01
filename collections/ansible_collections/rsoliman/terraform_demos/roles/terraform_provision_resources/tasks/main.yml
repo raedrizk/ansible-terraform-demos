@@ -28,4 +28,8 @@
     project_path: /var/terraform/plans/{{ working_dir_name }}
     variables_file: /var/terraform/plans/{{ working_dir_name }}/{{ tf_vars_file_name }}
     state: present
+    backend_config:
+      region: "ud-east-1"
+      bucket: "tfdemo-backend-bucket"
+      key: "TFDemo-aws.tfstate"
   when: prepare_callback_demo is not defined or not prepare_callback_demo

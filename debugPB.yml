@@ -1,0 +1,8 @@
+---
+- name: Debug
+  hosts: all
+  gather_facts: false
+  tasks:
+  - name: create AWS config file
+    ansible.builtin.debug:
+      msg: Pass is {{ q("config","password",plugin_type="connection",plugin_name="ssh") }}

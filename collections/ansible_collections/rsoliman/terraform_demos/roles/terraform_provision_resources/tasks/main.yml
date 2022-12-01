@@ -56,9 +56,14 @@
   #   ansible.builtin.debug:
   #     msg: "{{ tfstate['content'] | b64decode }}"
 
+  # - name: Read outputs from state file
+  #   cloud.terraform.terraform_output:
+  #     project_path: /var/terraform/plans/{{ working_dir_name }}
+  #   register: terraform_state_file
+
   - name: Read outputs from state file
     cloud.terraform.terraform_output:
-      project_path: /var/terraform/plans/{{ working_dir_name }}
+      state_file: /var/terraform/plans/{{ working_dir_name }}/terraform.tfstate
     register: terraform_state_file
 
   - name: Print state file for DEMO perposes

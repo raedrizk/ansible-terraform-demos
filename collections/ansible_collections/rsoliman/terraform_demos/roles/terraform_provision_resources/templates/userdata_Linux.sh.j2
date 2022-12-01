@@ -1,5 +1,5 @@
 #!/bin/bash
-useradd -m -p $(echo '{{ q("config","password",plugin_type="connection",plugin_name="ssh") }}' | openssl passwd -1 -stdin) ansibleadmin
+useradd -m -p $(echo '{{ ansibleadmin_password }}' | openssl passwd -1 -stdin) ansibleadmin
 usermod -a -G sudo ansibleadmin
 usermod -a -G wheel ansibleadmin
 sed -i 's/PasswordAuthentication.*/PasswordAuthentication yes/' /etc/ssh/sshd_config

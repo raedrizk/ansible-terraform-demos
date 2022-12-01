@@ -21,14 +21,14 @@
     src: "{{ init_script_name }}.j2"
     dest: /var/terraform/plans/{{ working_dir_name }}/{{ init_script_name }}
 
-# - block:
-#   - name: Apply terraform plan
-#     cloud.terraform.terraform:
-#       force_init: true
-#       lock: true
-#       project_path: /var/terraform/plans/{{ working_dir_name }}
-#       variables_file: /var/terraform/plans/{{ working_dir_name }}/{{ tf_vars_file_name }}
-#       state: present
+- block:
+  - name: Apply terraform plan
+    cloud.terraform.terraform:
+      force_init: true
+      lock: true
+      project_path: /var/terraform/plans/{{ working_dir_name }}
+      variables_file: /var/terraform/plans/{{ working_dir_name }}/{{ tf_vars_file_name }}
+      state: present
     # environment:
     #   AWS_STS_REGIONAL_ENDPOINTS: regional
     #   AWS_DEFAULT_REGION: us-east-2
@@ -56,14 +56,14 @@
   #   ansible.builtin.debug:
   #     msg: "{{ tfstate['content'] | b64decode }}"
 
-  # - name: Read outputs from state file
-  #   cloud.terraform.terraform_output:
-  #     project_path: /var/terraform/plans/{{ working_dir_name }}
-  #   register: terraform_state_file
+  - name: Read outputs from state file
+    cloud.terraform.terraform_output:
+      project_path: /var/terraform/plans/{{ working_dir_name }}
+    register: terraform_state_file
 
-  # - name: Print state file for DEMO perposes
-  #   debug:
-  #     var: terraform_state_file
+  - name: Print state file for DEMO perposes
+    debug:
+      var: terraform_state_file
 
   # - name: Add hosts from terraform_output            
   #   ansible.builtin.add_host:
@@ -74,4 +74,4 @@
   #   loop: "{{ terraform_state_file.outputs[mapping_variables.host_list].value }}"
 
 
-  # when: prepare_callback_demo is not defined or not prepare_callback_demo
+  when: prepare_callback_demo is not defined or not prepare_callback_demo

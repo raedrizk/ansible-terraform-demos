@@ -6,5 +6,6 @@
     working_dir_name_choice: 'provision_aws_resources'
     tf_plan_file_name_choice: 'provision_aws_resources.tf'
     tf_vars_file_name_choice: 'provision_aws_resources.tfvars'
+    state: present
   roles:
-  - rsoliman.terraform_demos.terraform_provision_resources
+  - rsoliman.terraform_demos.terraform_manage_resources

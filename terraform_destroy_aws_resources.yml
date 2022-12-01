@@ -6,10 +6,5 @@
     working_dir_name_choice: 'provision_aws_resources'
     tf_plan_file_name_choice: 'provision_aws_resources.tf'
     tf_vars_file_name_choice: 'provision_aws_resources.tfvars'
-  pre_tasks:
-  - name: create AWS config file
-    ansible.builtin.file:
-
-    ~/.aws/credentials  
   roles:
   - rsoliman.terraform_demos.terraform_destroy_resources

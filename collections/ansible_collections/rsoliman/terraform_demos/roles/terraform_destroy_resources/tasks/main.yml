@@ -5,22 +5,15 @@
     path: /var/terraform/plans/{{ working_dir_name }}/terraform.tfstate
   register: statefile_check
 
-- ansible.builtin.debug:
-    var: statefile_check.stat.exists
-
 - name: destroy terraform plan and cleanup directory
   block:
   - name: destroy terraform plan
-    community.general.terraform:
+    cloud.terraform.terraform:
       project_path: /var/terraform/plans/{{ working_dir_name }}
       state: absent
       purge_workspace: yes
       state_file: /var/terraform/plans/{{ working_dir_name }}/terraform.tfstate
       variables_file: /var/terraform/plans/{{ working_dir_name }}/{{ tf_vars_file_name }}
-    register: tf_output
-
-  - ansible.builtin.debug:
-      var: tf_output
 
   - name: Remove the /var/terraform/plans/{{ working_dir_name }} directory
     ansible.builtin.file:

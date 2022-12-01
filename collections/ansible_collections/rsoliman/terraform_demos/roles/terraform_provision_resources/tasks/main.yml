@@ -16,28 +16,16 @@
     src: "{{ tf_vars_file_name }}.j2"
     dest: /var/terraform/plans/{{ working_dir_name }}/{{ tf_vars_file_name }}
 
-- name: Copy the userdata template
+- name: Copy the userdata script for callbacks
   ansible.builtin.template:
     src: "{{ init_script_name }}.j2"
     dest: /var/terraform/plans/{{ working_dir_name }}/{{ init_script_name }}
 
-- block:
-  - name: Apply terraform plan
-    cloud.terraform.terraform:
-      force_init: true
-      lock: true
-      project_path: /var/terraform/plans/{{ working_dir_name }}
-      variables_file: /var/terraform/plans/{{ working_dir_name }}/{{ tf_vars_file_name }}
-      state: present
-
-  - name: cleanup userdata file 
-    ansible.builtin.file:
-      path: /var/terraform/plans/{{ working_dir_name }}/{{ init_script_name }}
-      state: absent
-
-  - name: replcae userdata file with empty one for destroy actions
-    ansible.builtin.file:
-      path: /var/terraform/plans/{{ working_dir_name }}/{{ init_script_name }}
-      state: touch
-
+- name: Apply terraform plan
+  cloud.terraform.terraform:
+    force_init: true
+    lock: true
+    project_path: /var/terraform/plans/{{ working_dir_name }}
+    variables_file: /var/terraform/plans/{{ working_dir_name }}/{{ tf_vars_file_name }}
+    state: present
   when: prepare_callback_demo is not defined or not prepare_callback_demo

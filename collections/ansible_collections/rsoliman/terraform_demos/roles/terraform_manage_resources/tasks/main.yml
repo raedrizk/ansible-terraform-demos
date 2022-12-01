@@ -27,7 +27,7 @@
     lock: true
     project_path: /var/terraform/plans/{{ working_dir_name }}
     variables_file: /var/terraform/plans/{{ working_dir_name }}/{{ tf_vars_file_name }}
-    state: "{{ state }}"
+    state: "{{ resources_state }}"
     backend_config:
       region: "us-east-1"
       bucket: "tfdemo-backend-bucket"

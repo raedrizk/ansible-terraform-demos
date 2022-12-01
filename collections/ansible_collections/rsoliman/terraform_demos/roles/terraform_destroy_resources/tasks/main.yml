@@ -1,22 +1,18 @@
 ---
 # tasks file for terraform_provision_aws_resources
-- name: Make sure working directory exists
-  ansible.builtin.stat:
-    path: /var/terraform/plans/{{ working_dir_name }}/terraform.tfstate
-  register: statefile_check
+- name: destroy terraform plan
+  cloud.terraform.terraform:
+    project_path: /var/terraform/plans/{{ working_dir_name }}
+    state: absent
+    purge_workspace: yes
+    variables_file: /var/terraform/plans/{{ working_dir_name }}/{{ tf_vars_file_name }}
+    backend_config:
+      region: "us-east-1"
+      bucket: "tfdemo-backend-bucket"
+      key: "aws/terraform.tfstate"
 
-- name: destroy terraform plan and cleanup directory
-  block:
-  - name: destroy terraform plan
-    cloud.terraform.terraform:
-      project_path: /var/terraform/plans/{{ working_dir_name }}
-      state: absent
-      purge_workspace: yes
-      state_file: /var/terraform/plans/{{ working_dir_name }}/terraform.tfstate
-      variables_file: /var/terraform/plans/{{ working_dir_name }}/{{ tf_vars_file_name }}
+- name: Remove the /var/terraform/plans/{{ working_dir_name }} directory
+  ansible.builtin.file:
+    path: /var/terraform/plans/{{ working_dir_name }}
+    state: absent
 
-  - name: Remove the /var/terraform/plans/{{ working_dir_name }} directory
-    ansible.builtin.file:
-      path: /var/terraform/plans/{{ working_dir_name }}
-      state: absent
-  when: statefile_check.stat.exists

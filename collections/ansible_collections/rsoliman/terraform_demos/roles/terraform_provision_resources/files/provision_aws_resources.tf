@@ -1,3 +1,8 @@
+terraform {
+backend "s3" {
+}
+}
+
 variable "region_name" {
   type        = string
   description = "The AWS region to provision resources into."

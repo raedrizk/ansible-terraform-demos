@@ -1,13 +1,13 @@
 # Ansible Collection - rsoliman.terraform_demos
 
-A collection of roles used to demo driving Terraform plans using ansible to create and destroy resources on both AWS and Azure.
+A collection of roles used to demo driving Terraform plans using ansible to create and destroy resources on AWS, Azure and GCP.
 
 # Requirements
 
-- community.general
+- amazon.aws
 - ansible.builtin collection
+- cloud.terrafom
 
 # Roles
 
-- terraform_destroy_resources
-- terraform_provision_resources
+- terraform_manage_resources

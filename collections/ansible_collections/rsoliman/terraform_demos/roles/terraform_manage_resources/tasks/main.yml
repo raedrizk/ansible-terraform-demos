@@ -60,4 +60,4 @@
         path: /var/terraform/plans/{{ working_dir_name }}/terraform.tfstate
         state: absent
     when: resources_state == "present"  
-  when: prepare_callback_demo is not defined or not prepare_callback_demo
+  when: not prepare_callback_demo

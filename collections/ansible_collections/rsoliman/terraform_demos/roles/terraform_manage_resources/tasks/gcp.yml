@@ -9,10 +9,6 @@
       bucket: "tfdemo-backend-bucket"
       prefix: "terraform/state"
 
-
-
-
-
 - block:
   - name: Download an object
     google.cloud.gcp_storage_object:

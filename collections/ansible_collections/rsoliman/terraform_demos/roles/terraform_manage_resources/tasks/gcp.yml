@@ -5,10 +5,13 @@
     project_path: /var/terraform/plans/{{ working_dir_name }}
     variables_file: /var/terraform/plans/{{ working_dir_name }}/{{ tf_vars_file_name }}
     state: "{{ resources_state }}"
-    # backend_config:
-    #   region: "us-east-1"
-    #   bucket: "tfdemo-backend-bucket"
-    #   key: "aws/terraform.tfstate"
+    backend_config:
+      bucket: "tfdemo-backend-bucket"
+      prefix: "terraform/state"
+
+
+
+
 
 # - block:
 #   - name: Get state file 

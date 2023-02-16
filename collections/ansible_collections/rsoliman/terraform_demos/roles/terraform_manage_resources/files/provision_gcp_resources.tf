@@ -1,3 +1,7 @@
+terraform {
+  backend "gcs" {
+  }
+}
 variable "project" {
   type        = string
   description = "The GCP Project to provision resources into."

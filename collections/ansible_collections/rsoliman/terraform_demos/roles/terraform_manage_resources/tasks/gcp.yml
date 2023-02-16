@@ -1,0 +1,38 @@
+- name: manage terraform plan
+  cloud.terraform.terraform:
+    force_init: true
+    lock: true
+    project_path: /var/terraform/plans/{{ working_dir_name }}
+    variables_file: /var/terraform/plans/{{ working_dir_name }}/{{ tf_vars_file_name }}
+    state: "{{ resources_state }}"
+    # backend_config:
+    #   region: "us-east-1"
+    #   bucket: "tfdemo-backend-bucket"
+    #   key: "aws/terraform.tfstate"
+
+# - block:
+#   - name: Get state file 
+#     amazon.aws.s3_object:
+#       region: "us-east-1"
+#       bucket: "tfdemo-backend-bucket"
+#       object: "aws/terraform.tfstate"
+#       dest: /var/terraform/plans/{{ working_dir_name }}/terraform.tfstate
+#       mode: get
+#     when: resources_state == "present"
+
+#   - name: List outputs from terraform.tfstate in project_dir
+#     cloud.terraform.terraform_output:
+#       project_path: /var/terraform/plans/{{ working_dir_name }}
+#     register: tf_output
+#     when: resources_state == "present"
+
+#   - name: print output
+#     ansible.builtin.debug:
+#       var: tf_output
+#     when: resources_state == "present"
+
+#   - name: remove statefile
+#     ansible.builtin.file:
+#       path: /var/terraform/plans/{{ working_dir_name }}/terraform.tfstate
+#       state: absent
+#   when: resources_state == "present"  

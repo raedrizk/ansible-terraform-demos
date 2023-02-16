@@ -1,5 +1,6 @@
 ---
 # vars file for terraform_provision_aws_resources
+#General Vars
 terraform_demo_cloud: "{{ terraform_demo_cloud_choice | default('aws') }}"
 
 working_dir_name: "{{ working_dir_name_choice | default('provision_aws_resources') }}"
@@ -7,19 +8,20 @@ tf_plan_file_name: "{{ tf_plan_file_name_choice | default('provision_aws_resourc
 tf_vars_file_name: "{{ tf_vars_file_name_choice | default('provision_aws_resources.tfvars') }}"
 init_script_name: "{{ 'userdata_Linux.sh' | default('userdata_Linux.sh') }}"
 resources_state: "{{ resources_state_choice | default('present') }}"
-aws_ami:
-  RHEL7: ami-2051294a
-  RHEL8: ami-092b43193629811af
-  RHEL9: ami-08d616b7fbe4bb9d0
-
-
-aws_ami_id: "{{ aws_ami[ec2_os] | default('ami-092b43193629811af') }}"
 
 ansible_controller_url: controller.demo.com
 ansible_controller_host_key: 123
 ansible_controller_template_id: 1
 
 
+#AWS Vars
+aws_ami:
+  RHEL7: ami-2051294a
+  RHEL8: ami-092b43193629811af
+  RHEL9: ami-08d616b7fbe4bb9d0
+aws_ami_id: "{{ aws_ami[ec2_os] | default('ami-092b43193629811af') }}"
+
+#Azure Vars
 azure_vm_os: "{{ azure_vm_os_choice | default('CentOS7.5') }}"
 azure_instance_private_ip_address: "{{ azure_instance_private_ip_address_choice | default('10.0.1.100') }}"
 azure_vm_image:
@@ -48,3 +50,11 @@ azure_vm_image:
     image_offer: "UbuntuServer"
     image_sku: "18.04-LTS"
     image_version: "latest"
+
+#GCP VARS
+gcp_ssh_user: "{{ gcp_ssh_user_choice | default('ansibleadmin') }}"
+gcp_image_offerings:
+  RHEL7: rhel-cloud/rhel-7
+  RHEL8: rhel-cloud/rhel-8
+  RHEL9: rhel-cloud/rhel-9
+gcp_image: "{{ gcp_image_offerings[gce_os] | default('rhel-cloud/rhel-8') }}"

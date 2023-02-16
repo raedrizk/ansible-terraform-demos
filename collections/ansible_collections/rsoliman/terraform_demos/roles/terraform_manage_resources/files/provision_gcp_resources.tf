@@ -83,8 +83,10 @@ resource "google_compute_instance" "vm_instance" {
       size = var.disksize
     }
   }
-#  metadata_startup_script = file("userdata_Linux.sh")
   metadata_startup_script = file(var.startupscript)
+  metadata = {
+    ssh-keys = "${var.gcp_ssh_user}:${var.public_key}"
+  }
   network_interface {
     network = google_compute_network.vpc_network.name
     access_config {

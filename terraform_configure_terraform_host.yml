@@ -1,0 +1,30 @@
+#WIP
+---
+- name: Configuring a host for TF Demos 
+  hosts: all
+  tasks:
+  - name: Add repository
+    ansible.builtin.yum:
+      name: 
+      - yum-utils
+      - python39
+      state: latest
+
+  - name: Add Hashi repo
+    ansible.builtin.command: yum-config-manager --add-repo https://rpm.releases.hashicorp.com/RHEL/hashicorp.repo
+
+  - name: Install TF
+    ansible.builtin.yum:
+      name: terraform
+      state: latest
+
+  - name: Install Python pre requisites
+    ansible.builtin.pip:
+      name:
+        - boto3
+        - botocore
+
+  - name: Create an aws config directory if it does not exist
+    ansible.builtin.file:
+      path: ~/.aws
+      state: directory

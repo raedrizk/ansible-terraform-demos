@@ -13,8 +13,10 @@ license:
 tags: ['terraform','demo','ansible','raedrizk','rsoliman']
 
 dependencies:
-    "community.general": "*"
+    "amazon.aws": "*"
     "ansible.builtin": "*"
+    "cloud.terraform": "*"
+    
 
 repository: http://example.com/repository
 homepage: http://example.com

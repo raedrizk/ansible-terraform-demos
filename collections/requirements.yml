@@ -1,3 +1,4 @@
 ---
 collections:
-- community.general
+- amazon.aws
+- cloud.terraform

@@ -1,10 +1,4 @@
 #!/bin/bash
-useradd -m -p $(echo "{{ ansible_password }}" | openssl passwd -1 -stdin) ansibleadmin
-usermod -a -G sudo ansibleadmin
-usermod -a -G wheel ansibleadmin
-sed -i 's/PasswordAuthentication.*/PasswordAuthentication yes/' /etc/ssh/sshd_config
-service ssh restart
-service sshd restart
 
 {% if prepare_callback_demo is defined and prepare_callback_demo %}
 curl -k -s -i -X POST -H 'Content-Type:application/json' --data '{"host_config_key": "{{ ansible_controller_host_key }}"}' {{ ansible_controller_url }}/api/v2/job_templates/{{ ansible_controller_template_id }}/callback/ 2>&1

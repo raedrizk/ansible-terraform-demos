@@ -1,5 +1,7 @@
 ---
 # vars file for terraform_provision_aws_resources
+terraform_demo_cloud: "{{ terraform_demo_cloud_choice | default('aws') }}"
+
 working_dir_name: "{{ working_dir_name_choice | default('provision_aws_resources') }}"
 tf_plan_file_name: "{{ tf_plan_file_name_choice | default('provision_aws_resources.tf') }}"
 tf_vars_file_name: "{{ tf_vars_file_name_choice | default('provision_aws_resources.tfvars') }}"

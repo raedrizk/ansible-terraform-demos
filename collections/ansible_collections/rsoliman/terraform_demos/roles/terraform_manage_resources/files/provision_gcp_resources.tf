@@ -38,6 +38,16 @@ variable "startupscript" {
   description = "Name of the startup script."
 }
 
+variable "gcp_ssh_user" {
+  type        = string
+  description = "Name of the SSH user for the provided key."
+}
+
+variable "public_key" {
+  type        = string
+  description = "Publice SSH key."
+}
+
 terraform {
   required_providers {
     google = {

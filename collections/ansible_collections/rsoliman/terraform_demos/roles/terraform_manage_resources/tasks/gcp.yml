@@ -1,13 +1,13 @@
-- name: manage terraform plan
-  cloud.terraform.terraform:
-    force_init: true
-    lock: true
-    project_path: /var/terraform/plans/{{ working_dir_name }}
-    variables_file: /var/terraform/plans/{{ working_dir_name }}/{{ tf_vars_file_name }}
-    state: "{{ resources_state }}"
-    backend_config:
-      bucket: "tfdemo-backend-bucket"
-      prefix: "terraform/state"
+# - name: manage terraform plan
+#   cloud.terraform.terraform:
+#     force_init: true
+#     lock: true
+#     project_path: /var/terraform/plans/{{ working_dir_name }}
+#     variables_file: /var/terraform/plans/{{ working_dir_name }}/{{ tf_vars_file_name }}
+#     state: "{{ resources_state }}"
+#     backend_config:
+#       bucket: "tfdemo-backend-bucket"
+#       prefix: "terraform/state"
 
 - block:
   - name: Download an object

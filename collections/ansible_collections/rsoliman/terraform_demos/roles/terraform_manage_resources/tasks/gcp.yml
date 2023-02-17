@@ -14,7 +14,7 @@
     google.cloud.gcp_storage_object:
       action: download
       bucket: tfdemo-backend-bucket
-      src: tarrform/state/default.tfstate
+      src: terraform/state/default.tfstate
       dest: /var/terraform/plans/{{ working_dir_name }}/terraform.tfstate
       #project: test_project
       auth_kind: serviceaccount

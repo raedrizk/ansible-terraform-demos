@@ -1,13 +1,13 @@
-# - name: manage terraform plan
-#   cloud.terraform.terraform:
-#     force_init: true
-#     lock: true
-#     project_path: /var/terraform/plans/{{ working_dir_name }}
-#     variables_file: /var/terraform/plans/{{ working_dir_name }}/{{ tf_vars_file_name }}
-#     state: "{{ resources_state }}"
-#     backend_config:
-#       bucket: "tfdemo-backend-bucket"
-#       prefix: "terraform/state"
+- name: manage terraform plan
+  cloud.terraform.terraform:
+    force_init: true
+    lock: true
+    project_path: /var/terraform/plans/{{ working_dir_name }}
+    variables_file: /var/terraform/plans/{{ working_dir_name }}/{{ tf_vars_file_name }}
+    state: "{{ resources_state }}"
+    backend_config:
+      bucket: "tfdemo-backend-bucket"
+      prefix: "terraform/state"
 
 - block:
   - name: Download an object
@@ -16,9 +16,7 @@
       bucket: tfdemo-backend-bucket
       src: terraform/state/default.tfstate
       dest: /var/terraform/plans/{{ working_dir_name }}/terraform.tfstate
-      #project: test_project
       auth_kind: serviceaccount
-      #service_account_file: "/tmp/auth.pem"
     when: resources_state == "present"
 
   - name: List outputs from terraform.tfstate in project_dir

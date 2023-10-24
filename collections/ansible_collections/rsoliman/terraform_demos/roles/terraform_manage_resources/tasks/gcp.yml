@@ -6,14 +6,14 @@
     variables_file: /var/terraform/plans/{{ working_dir_name }}/{{ tf_vars_file_name }}
     state: "{{ resources_state }}"
     backend_config:
-      bucket: "tfdemo-backend-bucket"
+      bucket: "ansible-tfdemo-backend-bucket"
       prefix: "terraform/state"
 
 - block:
   - name: Download an object
     google.cloud.gcp_storage_object:
       action: download
-      bucket: tfdemo-backend-bucket
+      bucket: ansible-tfdemo-backend-bucket
       src: terraform/state/default.tfstate
       dest: /var/terraform/plans/{{ working_dir_name }}/terraform.tfstate
       auth_kind: serviceaccount

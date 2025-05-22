@@ -16,10 +16,10 @@ ansible_controller_template_id: 1
 
 #AWS Vars
 aws_ami:
-  RHEL7: ami-2051294a
-  RHEL8: ami-092b43193629811af
-  RHEL9: ami-08d616b7fbe4bb9d0
-aws_ami_id: "{{ aws_ami[ec2_os] | default('ami-092b43193629811af') }}"
+  RHEL7: ami-06dcfc63
+  RHEL8: ami-0eda10ae068c51bc5
+  RHEL9: ami-003555ce5d8d2de2b
+aws_ami_id: "{{ aws_ami[ec2_os] | default('ami-003555ce5d8d2de2b') }}"
 
 #Azure Vars
 azure_vm_os: "{{ azure_vm_os_choice | default('CentOS7.5') }}"

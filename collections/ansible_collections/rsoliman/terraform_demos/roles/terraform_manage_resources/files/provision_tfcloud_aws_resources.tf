@@ -1,4 +1,6 @@
 terraform {
+  backend "s3" {
+  }
 	backend "remote" {
 		organization = var.tfcloud_org
 		workspaces {

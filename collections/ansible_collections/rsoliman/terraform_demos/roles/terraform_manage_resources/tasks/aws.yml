@@ -9,17 +9,7 @@
       region: "us-east-1"
       bucket: "ansible-tfdemo-backend-bucket"
       key: "aws/terraform.tfstate"
-    when: not use_terraform_cloud | bool
-
-- name: manage terraform plan
-  cloud.terraform.terraform:
-    force_init: true
-    lock: true
-    project_path: /var/terraform/plans/{{ working_dir_name }}
-    variables_file: /var/terraform/plans/{{ working_dir_name }}/{{ tf_vars_file_name }}
-    state: "{{ resources_state }}"
-    when: use_terraform_cloud | bool
-
+    
 - block:
   - name: Get state file 
     amazon.aws.s3_object:
@@ -45,5 +35,5 @@
     ansible.builtin.file:
       path: /var/terraform/plans/{{ working_dir_name }}/terraform.tfstate
       state: absent
-  when: not use_terraform_cloud | bool and resources_state == "present"
+  when: resources_state == "present"
   

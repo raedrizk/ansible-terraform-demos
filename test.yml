@@ -1,11 +1,11 @@
 ---
-- name: Manage {{ terraform_demo_cloud_choice }} resources using a Terraform Plan
+- name: Manage {{ terraform_demo_cloud }} resources using a Terraform Plan
   hosts: all
   gather_facts: false
   vars:
     use_terraform_cloud: true
-    working_dir_name_choice: "provision_tfcloud_aws_resources"
-    tf_plan_file_name_choice: "provision_tfcloud_aws_resources.tf" 
+    working_dir_name: "provision_tfcloud_aws_resources"
+    tf_plan_file_name: "provision_tfcloud_aws_resources.tf" 
     prepare_callback_demo: false
   tasks:
 

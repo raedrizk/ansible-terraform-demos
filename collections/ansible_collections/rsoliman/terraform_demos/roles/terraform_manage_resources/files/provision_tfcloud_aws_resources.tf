@@ -1,9 +1,10 @@
 terraform {
 	backend "remote" {
-		organization = var.tfcloud_org
-		workspaces {
-			name = var.tfcloud_workspace
-		}
+    organization = "foxhound-unit" 
+
+    workspaces { 
+      name = "aws-infra" 
+    } 
 	}
 }
 

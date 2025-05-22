@@ -7,14 +7,14 @@
     state: "{{ resources_state }}"
     backend_config:
       region: "us-east-1"
-      bucket: "ansible-tfdemo-backend-bucket"
+      bucket: "foxhound-ansible-tfdemo-backend-bucket"
       key: "aws/terraform.tfstate"
     
 - block:
   - name: Get state file 
     amazon.aws.s3_object:
       region: "us-east-1"
-      bucket: "ansible-tfdemo-backend-bucket"
+      bucket: "foxhound-ansible-tfdemo-backend-bucket"
       object: "aws/terraform.tfstate"
       dest: /var/terraform/plans/{{ working_dir_name }}/terraform.tfstate
       mode: get

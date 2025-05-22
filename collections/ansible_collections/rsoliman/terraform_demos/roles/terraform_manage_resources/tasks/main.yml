@@ -22,6 +22,13 @@
     src: "{{ init_script_name }}.j2"
     dest: /var/terraform/plans/{{ working_dir_name }}/{{ init_script_name }}
 
+- name: TFCloud Only - config Terraform Cloud
+  ansible.builtin.template:
+    src: "terraformrc.j2"
+    dest: ~/.terraformrc
+  no_log: true
+  when: use_terraform_cloud | bool
+
 - name: Include tasks for {{ terraform_demo_cloud }} management
   ansible.builtin.include_tasks: "{{ terraform_demo_cloud }}.yml"
   when: not prepare_callback_demo | bool

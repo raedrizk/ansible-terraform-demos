@@ -5,8 +5,7 @@
   vars:
     use_terraform_cloud: true
     working_dir_name_choice: "provision_tfcloud_aws_resources"
-    tf_plan_file_name_choice: "provision_tfcloud_aws_resources.tf"
-    
+    tf_plan_file_name_choice: "provision_tfcloud_aws_resources.tf" 
     prepare_callback_demo: false
   tasks:
 
@@ -28,8 +27,8 @@
     no_log: true
     when: use_terraform_cloud | bool
 
-- name: manage terraform plan
-  cloud.terraform.terraform:
-    force_init: false
-    project_path: /var/terraform/plans/{{ working_dir_name }}
-    state: "{{ resources_state }}"
+  - name: manage terraform plan
+    cloud.terraform.terraform:
+      force_init: false
+      project_path: /var/terraform/plans/{{ working_dir_name }}
+      state: "{{ resources_state }}"

@@ -29,6 +29,6 @@
 
   - name: manage terraform plan
     cloud.terraform.terraform:
-      force_init: false
+      force_init: true
       project_path: /var/terraform/plans/{{ working_dir_name }}
       state: "{{ resources_state }}"

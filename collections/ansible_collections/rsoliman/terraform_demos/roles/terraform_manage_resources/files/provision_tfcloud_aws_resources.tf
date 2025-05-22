@@ -7,7 +7,14 @@ terraform {
     } 
 	}
 }
-
+variable "tfcloud_org"{
+  type        = string
+  description = "The TF Cloud Org."
+}
+variable "tfcloud_workspace"{
+  type        = string
+  description = "The TF Cloud workspace."
+}
 variable "region_name" {
   type        = string
   description = "The AWS region to provision resources into."

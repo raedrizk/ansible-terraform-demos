@@ -126,10 +126,6 @@
       return_content: true
       validate_certs: true
     register: apply_response
-    # retries: 30
-    # delay: 10
-    # until: apply_response.json.data.status == "applied"
-  
-  - name: debug
-    debug:
-      var: apply_response
+    retries: 30
+    delay: 10
+    until: apply_response.json.data.attributes.status == "applied"

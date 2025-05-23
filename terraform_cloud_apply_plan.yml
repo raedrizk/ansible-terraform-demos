@@ -100,7 +100,7 @@
 
   - name: set run id fact
     set_fact:
-      run_id: "{{ response4.json.data[0].id }}"
+      run_id: "{{ run_response.json.data[0].id }}"
 
   - name: Approve and apply the plan
     ansible.builtin.uri:

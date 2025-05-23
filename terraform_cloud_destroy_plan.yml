@@ -74,3 +74,17 @@
       return_content: true
       validate_certs: true
       status_code: 200, 201, 202
+
+  - name: Check until plan is applied
+    ansible.builtin.uri:
+      url: "https://app.terraform.io/api/v2/runs/{{ run_id }}"
+      method: GET
+      headers:
+        Content-Type: application/vnd.api+json
+        Authorization: "Bearer {{ tfcloud_token }}"
+      return_content: true
+      validate_certs: true
+    register: apply_response
+    retries: 30
+    delay: 10
+    until: apply_response.json.data.attributes.status == "applied"

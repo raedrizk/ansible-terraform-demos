@@ -5,7 +5,7 @@
   vars:
     working_dir_name: "{{ input_tf_working_dir_name | default('provision_tfcloud_aws_resources') }}"
     tf_plan_file_name: "{{ input_tf_plan_file_name | default('provision_tfcloud_aws_resources.tf') }}"
-    tf_vars_file_name: "{{ input_tf_vars_file_name | default('provision_tfcloud_aws_resources.auto.fvars') }}" 
+    tf_vars_file_name: "{{ input_tf_vars_file_name | default('provision_tfcloud_aws_resources.auto.tfvars') }}" 
   tasks:
 
   - name: Make sure working directory exists

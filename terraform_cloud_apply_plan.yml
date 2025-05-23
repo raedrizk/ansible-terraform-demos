@@ -6,6 +6,11 @@
     working_dir_name: "{{ input_tf_working_dir_name | default('provision_tfcloud_aws_resources') }}"
     tf_plan_file_name: "{{ input_tf_plan_file_name | default('provision_tfcloud_aws_resources.tf') }}"
     tf_vars_file_name: "{{ input_tf_vars_file_name | default('provision_tfcloud_aws_resources.auto.tfvars') }}" 
+    aws_ami:
+      RHEL7: ami-06dcfc63
+      RHEL8: ami-0eda10ae068c51bc5
+      RHEL9: ami-003555ce5d8d2de2b
+    aws_ami_id: "{{ aws_ami[ec2_os] | default('ami-003555ce5d8d2de2b') }}"
   tasks:
 
   - name: Make sure working directory exists

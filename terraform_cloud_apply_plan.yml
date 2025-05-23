@@ -21,7 +21,7 @@
 
   - name: Copy the TF Vars Template
     ansible.builtin.template:
-      src: "{{ tf_vars_file_name }}.j2"
+      src: "TFCloud_demo_templates/{{ tf_vars_file_name }}.j2"
       dest: /var/terraform/plans/{{ working_dir_name }}/{{ tf_vars_file_name }}
 
   - name: Create a tar.gz archive of the resources.

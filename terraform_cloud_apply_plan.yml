@@ -118,7 +118,7 @@
 
   - name: Check until plan is applied
     ansible.builtin.uri:
-      url: "https://app.terraform.io/api/v2/workspaces/{{ workspace_id }}/runs?filter%5Bstatus%5D=applied"
+      url: "https://app.terraform.io/api/v2/runs/{{ run_id }}"
       method: GET
       headers:
         Content-Type: application/vnd.api+json
@@ -128,4 +128,4 @@
     register: apply_response
     retries: 30
     delay: 10
-    until: apply.json.data[0].id is defined
+    until: apply_response.json.data.status == "applied"

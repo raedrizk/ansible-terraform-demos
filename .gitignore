@@ -1,1 +1,3 @@
 .vscode*
+ansible-navigator*
+localhost_inventory

@@ -1,0 +1,48 @@
+---
+- name: Destroy aws resources using Terraform Cloud
+  hosts: all
+  gather_facts: false
+  tasks:
+
+  - name: get the workspace ID
+    ansible.builtin.uri:
+      url: "https://app.terraform.io/api/v2/organizations/{{ tfcloud_org }}/workspaces/{{ tfcloud_workspace }}"
+      method: GET
+      headers:
+        Content-Type: application/vnd.api+json
+        Authorization: "Bearer {{ tfcloud_token }}"
+      return_content: true
+      validate_certs: true
+    register: workspace_response
+
+  - name: set workspace ID fact
+    set_fact:
+      workspace_id: "{{ workspace_response.json.data.id }}"
+
+  - name: Trigger destroy plan
+    ansible.builtin.uri:
+      url: "https://app.terraform.io/api/v2/runs"
+      method: post
+      headers:
+        Content-Type: application/vnd.api+json
+        Authorization: "Bearer {{ tfcloud_token }}"
+      body_format: json
+      body:
+        data:
+          type: "runs"
+          attributes:
+            is-destroy: true
+            message: "Triggered Destroy"
+          relationships:
+            workspace:
+              data:
+                type: "workspaces"
+                id: "{{ workspace_id }}"
+      return_content: true
+      validate_certs: true
+      status_code: 200, 201, 202
+    register: response2
+
+  - name: debug
+    debug:
+      var: response2

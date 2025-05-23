@@ -1,0 +1,126 @@
+---
+- name: Manage aws resources using Terraform Cloud
+  hosts: all
+  gather_facts: false
+  vars:
+    working_dir_name: "{{ input_tf_working_dir_name | default('provision_tfcloud_aws_resources') }}"
+    tf_plan_file_name: "{{ input_tf_plan_file_name | default('provision_tfcloud_aws_resources.tf') }}"
+    tf_vars_file_name: "{{ input_tf_vars_file_name | default('provision_tfcloud_aws_resources.auto.fvars') }}" 
+  tasks:
+
+  - name: Make sure working directory exists
+    ansible.builtin.file:
+      path: /var/terraform/plans/{{ working_dir_name }}
+      state: directory
+      mode: '0755'
+
+  - name: Copy the TF Plan
+    ansible.builtin.template:
+      src: "TFCloud_demo_templates/{{ tf_plan_file_name }}.j2"
+      dest: /var/terraform/plans/{{ working_dir_name }}/{{ tf_plan_file_name }}
+
+  - name: Copy the TF Vars Template
+    ansible.builtin.template:
+      src: "{{ tf_vars_file_name }}.j2"
+      dest: /var/terraform/plans/{{ working_dir_name }}/{{ tf_vars_file_name }}
+
+  - name: Create a tar.gz archive of the resources.
+    community.general.archive:
+      path: 
+      - /var/terraform/plans/{{ working_dir_name }}/{{ tf_plan_file_name }}
+      - /var/terraform/plans/{{ working_dir_name }}/{{ tf_vars_file_name }}
+      dest: /var/terraform/plans/{{ working_dir_name }}/tfconfig.tar.gz
+      format: gz
+      force_archive: true
+
+  - name: get the workspace ID
+    ansible.builtin.uri:
+      url: "https://app.terraform.io/api/v2/organizations/{{ tfcloud_org }}/workspaces/{{ tfcloud_workspace }}"
+      method: GET
+      headers:
+        Content-Type: application/vnd.api+json
+        Authorization: "Bearer {{ tfcloud_token }}"
+      return_content: true
+      validate_certs: true
+    register: workspace_response
+
+  - name: set workspace ID fact
+    set_fact:
+      workspace_id: "{{ workspace_response.json.data.id }}"
+
+  - name: Create config and get upload URL
+    ansible.builtin.uri:
+      url: "https://app.terraform.io/api/v2/workspaces/{{ workspace_id }}/configuration-versions"
+      method: post
+      headers:
+        Content-Type: application/vnd.api+json
+        Authorization: "Bearer {{ tfcloud_token }}"
+      body_format: json
+      body:
+        data:
+          type: "configuration-versions"
+          attributes:
+            auto-queue-runs: true
+      return_content: true
+      validate_certs: true
+      status_code: 201
+    register: config_response
+
+  - name: set upload URL fact
+    set_fact:
+      upload_url: "{{ config_response.json.data.attributes | json_query('\"upload-url\"') }}"
+
+  - name: Upload the configuration
+    ansible.builtin.uri:
+      url: "{{ upload_url }}"
+      method: PUT
+      src: /var/terraform/plans/{{ working_dir_name }}/tfconfig.tar.gz
+      headers:
+        Content-Type: application/octet-stream
+      validate_certs: true
+
+  - name: get run ID
+    ansible.builtin.uri:
+      url: "https://app.terraform.io/api/v2/workspaces/{{ workspace_id }}/runs?filter%5Bstatus%5D=planned"
+      method: GET
+      headers:
+        Content-Type: application/vnd.api+json
+        Authorization: "Bearer {{ tfcloud_token }}"
+      return_content: true
+      validate_certs: true
+    register: run_response
+    retries: 20
+    delay: 5
+    until: run_response.json.data[0].id is defined
+
+  - name: set run id fact
+    set_fact:
+      run_id: "{{ response4.json.data[0].id }}"
+
+  - name: Approve and apply the plan
+    ansible.builtin.uri:
+      url: "https://app.terraform.io/api/v2/runs/{{ run_id }}/actions/apply"
+      method: post
+      headers:
+        Content-Type: application/vnd.api+json
+        Authorization: "Bearer {{ tfcloud_token }}"
+      body_format: json
+      body:
+        comment: "Apply from Ansible"
+      return_content: true
+      validate_certs: true
+      status_code: 200, 201, 202
+
+  - name: Check until plan is applied
+    ansible.builtin.uri:
+      url: "https://app.terraform.io/api/v2/workspaces/{{ workspace_id }}/runs?filter%5Bstatus%5D=applied"
+      method: GET
+      headers:
+        Content-Type: application/vnd.api+json
+        Authorization: "Bearer {{ tfcloud_token }}"
+      return_content: true
+      validate_certs: true
+    register: apply_response
+    retries: 30
+    delay: 10
+    until: apply.json.data[0].id is defined

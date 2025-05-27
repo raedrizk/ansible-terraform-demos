@@ -5,14 +5,7 @@ terraform {
     workspaces { 
       name = "<TF_WORKSPACE>" 
     } 
-	}
-
-   required_providers {
-    aap = {
-      source = "ansible/aap"
-    }
-  }
-  
+	}  
 }
 
 variable "region_name" {

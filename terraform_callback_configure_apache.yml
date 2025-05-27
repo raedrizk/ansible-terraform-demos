@@ -10,7 +10,51 @@
 
     - name: Copy index.html file
       ansible.builtin.copy:
-        src: files/index.html
+        content: |
+                <html lang="en">
+                  <head>
+                      <meta charset="utf-8">
+                      <title>Ansible Rules</title>
+                      <link href='https://fonts.googleapis.com/css?family=Open+Sans' rel='stylesheet' type='text/css'>
+                      <style>
+                        body {
+                        font-family: 'Open Sans', sans-serif;
+                        text-align: center;
+                        background-color: WhiteSmoke;
+                        }
+                        .container {
+                        position: absolute;
+                        top: 50%;
+                        left: 50%;
+                        -moz-transform: translateX(-50%) translateY(-50%);
+                        -webkit-transform: translateX(-50%) translateY(-50%);
+                        transform: translateX(-50%) translateY(-50%);
+                        font-size: 200%;
+                        }
+                        .version {
+                        position: absolute;
+                        top: 60%;
+                        left: 50%;
+                        -moz-transform: translateX(-50%) translateY(-50%);
+                        -webkit-transform: translateX(-50%) translateY(-50%);
+                        transform: translateX(-50%) translateY(-50%);
+                        font-size: 200%;
+                        }
+                        footer {
+                        width: 100%;
+                        font-size: 100%;
+                        }
+                        img {
+                        margin: 0 auto;
+                        }
+                      </style>
+                  </head>
+                  <body>
+                      <div class="container">
+                        <img src="https://steinzi.com/network-automation-landscape/logos/302399452405a1689c0fa727816271bf2ae2579bd4318399dc90e69275bf006d.png" width="100%"/>
+                      </div>
+                  </body>
+                </html>
         dest: /var/www/html/index.html
 
     - name: Start the httpd service

@@ -1,0 +1,20 @@
+---
+- name: Setup web server for url watch
+  hosts: all
+  gather_facts: false
+  tasks:
+    - name: Make sure that httpd is installed
+      ansible.builtin.dnf:
+        name: httpd
+        state: present
+
+    - name: Copy index.html file
+      ansible.builtin.copy:
+        src: files/index.html
+        dest: /var/www/html/index.html
+
+    - name: Start the httpd service
+      ansible.builtin.service:
+        name: httpd
+        state: started
+        enabled: true

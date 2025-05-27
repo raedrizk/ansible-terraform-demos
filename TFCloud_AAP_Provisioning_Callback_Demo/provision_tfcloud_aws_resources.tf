@@ -46,28 +46,6 @@ variable "public_key" {
   description = "The public key to deploy for the new instance(s)."
 }
 
-variable "aap_host" {
-  type        = string
-  description = "The AAP host URL."
-}
-
-variable "aap_username" {
-  type        = string
-  description = "The AAP username."
-}
-
-variable "aap_password" {
-  type        = string
-  description = "The AAP password."
-  sensitive   = true
-}
-
-provider "aap" {
-  host                 = var.aap_host
-  username             = var.aap_username
-  password             = var.aap_password
-  insecure_skip_verify = false
-}
 
 provider "aws" {
   region  = var.region_name
@@ -115,6 +93,7 @@ resource "aws_instance" "Terraform_Demo_EC2" {
   ami           = var.ami_id
   instance_type = var.instance_type
   security_groups = [aws_security_group.Terraform_Demo_SG.name]
+  user_data = file("userdata_Linux.sh")
   key_name = var.name_tag
   tags = {
                 Name = "${var.name_tag}-${count.index + 1}"
@@ -122,32 +101,6 @@ resource "aws_instance" "Terraform_Demo_EC2" {
                 Manager = "Ansible"
         }
   }
-
-resource "aap_inventory" "tf_inventory" {
-  name        = "AUTO_TF_Inventory"
-  description = "Inventory created by Terraform AAP provider"  
-}
-
-resource "aap_group" "tf_group" {
-  inventory_id = aap_inventory.tf_inventory.id
-  name         = "TFHosts"
-}
-
-resource "aap_host" "tf_host" {
-  inventory_id = aap_inventory.tf_inventory.id
-  name         = aws_instance.Terraform_Demo_EC2[0].public_dns
-  variables = jsonencode(
-    {
-      "ansible_user" : "ec2-user"
-    }
-  )
-  groups = [aap_group.tf_group.id]
-}
-
-resource "aap_job" "tf_job" {
-  job_template_id = 112 # Replace with your actual job template ID
-  inventory_id    = aap_inventory.tf_inventory.id
-}
 
 output "instance_ip_addr" {
   value       = "${formatlist("%v", aws_instance.Terraform_Demo_EC2.*.public_ip)}"

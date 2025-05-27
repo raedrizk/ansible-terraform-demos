@@ -143,7 +143,6 @@ resource "aap_job" "tf_job" {
   inventory_id    = aap_inventory.tf_inventory.id
 }
 
-
 output "instance_ip_addr" {
   value       = "${formatlist("%v", aws_instance.Terraform_Demo_EC2.*.public_ip)}"
   description = "The Public IP address of the instance."
@@ -158,4 +157,3 @@ output "instance_tags" {
   value       = "${formatlist("%v", aws_instance.Terraform_Demo_EC2.*.tags_all)}"
   description = "The tags of the instance."
 }
-

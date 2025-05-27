@@ -128,6 +128,11 @@ resource "aap_inventory" "tf_inventory" {
   description = "Inventory created by Terraform AAP provider"  
 }
 
+resource "aap_group" "tf_group" {
+  inventory_id = aap_inventory.tf_inventory.id
+  name         = "web"
+}
+
 resource "aap_host" "tf_host" {
   inventory_id = aap_inventory.tf_inventory.id
   name         = aws_instance.Terraform_Demo_EC2[0].public_dns
@@ -136,6 +141,7 @@ resource "aap_host" "tf_host" {
       "ansible_user" : "ec2-user"
     }
   )
+  groups = [aap_group.tf_group.id]
 }
 
 resource "aap_job" "tf_job" {

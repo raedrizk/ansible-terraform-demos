@@ -3,6 +3,13 @@
   hosts: all
   gather_facts: false
   tasks:
+    - name: Wait 300 seconds for port 22 to become open
+      ansible.builtin.wait_for:
+        port: 22
+        host: "{{ inventory_hostname }}"
+        delay: 10
+        timeout: 300
+        
     - name: Make sure that httpd is installed
       ansible.builtin.dnf:
         name: httpd

@@ -9,6 +9,7 @@
         host: "{{ inventory_hostname }}"
         delay: 10
         timeout: 300
+      delegate_to: localhost
         
     - name: Make sure that httpd is installed
       ansible.builtin.dnf:

@@ -10,7 +10,7 @@
         delay: 10
         timeout: 300
       delegate_to: localhost
-        
+
     - name: Make sure that httpd is installed
       ansible.builtin.dnf:
         name: httpd
@@ -64,6 +64,14 @@
                   </body>
                 </html>
         dest: /var/www/html/index.html
+
+    # Disable firewalld if running (calm down, it's a demo)
+    - name: Stop and disable firewalld service
+      ansible.builtin.service:
+        name: firewalld
+        state: stopped
+        enabled: false
+      ignore_errors: true
 
     - name: Start the httpd service
       ansible.builtin.service:
